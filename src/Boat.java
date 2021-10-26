@@ -55,19 +55,19 @@ public class Boat extends Skiff{
     {
         super.DrawTransport(g);
 
-        Graphics2D g2d=(Graphics2D)g;
+
         if (Deck)
         {
-            g2d.setColor(DopColor);
+            g.setColor(DopColor);
             int[] pointDeckX={startX + 120, startX + 120, startX + 150, startX + 120, startX + 120, startX + 159};
             int[] pointDeckY={startY + 1, startY + 10, startY+40, startY+70, startY+79, startY+40};
-            g2d.fillPolygon(pointDeckX, pointDeckY, 6);
-            g2d.setColor(Color.black);
-            g2d.drawPolygon(pointDeckX, pointDeckY, 6);
+            g.fillPolygon(pointDeckX, pointDeckY, 6);
+            g.setColor(Color.black);
+            g.drawPolygon(pointDeckX, pointDeckY, 6);
         }
 
         if(Motor){
-            motors.drawMotors(DopColor, g2d, startX, startY);
+            motors.drawMotors(DopColor, g, startX, startY);
         }
     }
 }

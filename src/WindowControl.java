@@ -13,9 +13,16 @@ public class WindowControl extends JPanel{
     JButton btnLeft = new JButton(new ImageIcon("src/left.png"));
     JButton btnRight = new JButton(new ImageIcon("src/right.png"));
 
-    private void drawAll(){
-        skiff.DrawTransport(getGraphics());
-        paintComponents(getGraphics());
+    private void Draw(Graphics g){
+        skiff.DrawTransport(g);
+    }
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        Draw(g);
+    }
+    public void SetSkiff(ITransport skiff){
+        this.skiff=skiff;
+        this.skiff.SetPosition(50, 50, 818, 497);
     }
 
     public class Click implements ActionListener {
@@ -36,7 +43,7 @@ public class WindowControl extends JPanel{
                     skiff.MoveTransport(Direction.Right);
                     break;
             }
-            drawAll();
+            repaint();
         }
     }
     public void addButton(JButton btn, int btnX, int btnY, int btnWidth, int btnHeigth){
@@ -62,7 +69,7 @@ public class WindowControl extends JPanel{
                 Random rand=new Random();
                 skiff=new Skiff(rand.nextInt(100)+300, rand.nextInt(1000)+2000,Color.cyan);
                 skiff.SetPosition(rand.nextInt(50)+100, rand.nextInt(50)+100, getWidth(), getHeight());
-                drawAll();
+                repaint();
             }
         });
         btnCreateBoat.addActionListener(new ActionListener() {
@@ -72,7 +79,7 @@ public class WindowControl extends JPanel{
                 skiff=new Boat(rand.nextInt(100)+300, rand.nextInt(1000)+2000, Color.cyan, Color.red, true,
                         true);
                 skiff.SetPosition(rand.nextInt(50)+100, rand.nextInt(50)+100, getWidth(), getHeight());
-                drawAll();
+                repaint();
             }
         });
         btnDown.addActionListener(new Click());
