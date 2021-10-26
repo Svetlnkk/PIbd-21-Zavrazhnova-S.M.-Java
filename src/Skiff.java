@@ -53,18 +53,15 @@ public class Skiff extends Vehicle{
     @Override
     public void DrawTransport(Graphics g)
     {
-        g.clearRect(0, 0, 818, 497);
-        Graphics2D g2d=(Graphics2D)g;
+        g.setColor(Color.black);
 
-        g2d.setPaint(Color.black);
-
-        g2d.setColor(MainColor);
+        g.setColor(MainColor);
         int[] pointBoatX={startX+20, startX+120,startX+160, startX+120, startX+20};
         int[] pointBoatY={startY, startY, startY+40, startY+80, startY+80};
-        g2d.fillPolygon(pointBoatX, pointBoatY, 5);
-        g2d.setColor(Color.black);
-        g2d.drawPolygon(pointBoatX, pointBoatY, 5);
-        g2d.drawOval(startX + 40, startY + 20, 85, 40);
+        g.fillPolygon(pointBoatX, pointBoatY, 5);
+        g.setColor(Color.black);
+        g.drawPolygon(pointBoatX, pointBoatY, 5);
+        g.drawOval(startX + 40, startY + 20, 85, 40);
     }
 }
 
