@@ -1,7 +1,9 @@
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Harbor<T extends ITransport, U extends ISpeed> {
-    private Object[] places;
+    private ArrayList<T> places;
+    private int maxCount;
     private int PicWidth;
     private int PicHeight;
     private int placeSizeWidth=200;
@@ -13,21 +15,22 @@ public class Harbor<T extends ITransport, U extends ISpeed> {
     {
         width = picWidth / placeSizeWidth;
         height = picHeight / placeSizeHeight;
-        places =new Object[width * height];
+        maxCount=width * height;
+        places =new ArrayList<T>();
         PicWidth = picWidth;
         PicHeight = picHeight;
     }
+    public T getBoat(int index){
+        if(index>-1 && index<places.size()){
+            return places.get(index);
+        }
+        return null;
+    }
 
     public int addSkiff(T skiff){
-        int i=0;
-        while(i<places.length && places[i]!=null){
-            i++;
-        }
-        if(i<places.length && places[i]==null){
-            skiff.SetPosition(5 + i%width * placeSizeWidth, 5 + i /width* placeSizeHeight,
-                    PicWidth, PicHeight);
-            places[i] = skiff;
-            return i;
+        if(places.size()<maxCount){
+            places.add(skiff);
+            return places.size()-1;
         }
         else {
             return -1;
@@ -35,20 +38,18 @@ public class Harbor<T extends ITransport, U extends ISpeed> {
     }
 
     public T remove(int index){
-        if(index>=places.length || index < 0) { return null; }
-        if (places[index] != null)
-        {
-            T return_T = (T)places[index];
-            places[index] = null;
-            return return_T;
+        if(index>-1 && index<places.size()){
+            T removeSkiff=places.get(index);
+            places.remove(index);
+            return removeSkiff;
         }
         else { return null; }
     }
 
     public boolean equal(int numBoat) { // ==
         int numCorrectBoat = 0;
-        for (int i = 0; i < places.length; i++) {
-            if (places[i] != null) {
+        for (int i = 0; i < places.size(); i++) {
+            if (places.get(i) != null) {
                 numCorrectBoat++;
             }
         }
@@ -63,12 +64,10 @@ public class Harbor<T extends ITransport, U extends ISpeed> {
     {
         g.setColor(Color.BLACK);
         DrawMarking(g);
-        for(int i=0; i<places.length; i++)
+        for(int i=0; i<places.size(); i++)
         {
-            if (places[i] != null) {
-                T place = (T) places[i];
-                place.DrawTransport( g );
-            }
+            places.get(i).SetPosition(5 + i % 5 * placeSizeWidth + 5, i /5 * placeSizeHeight + 5, PicWidth, PicHeight);
+            places.get(i).DrawTransport(g);
         }
     }
     private void DrawMarking(Graphics g)

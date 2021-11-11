@@ -55,7 +55,6 @@ public class Boat extends Skiff{
     {
         super.DrawTransport(g);
 
-
         if (Deck)
         {
             g.setColor(DopColor);
