@@ -6,7 +6,7 @@ public class CanvasHarbor extends JFrame{
         setTitle("Гавань");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1220, 670);
-        setLocation(300, 300);
+        setLocation(200, 100);
         add(windowControlHarbor);
         setVisible(true);
     }

@@ -35,21 +35,32 @@ public class Boat extends Skiff{
             Random rand = new Random();
             switch(rand.nextInt(3)){
                 case 0:
-                    motors=new LightMotor(skiffHeight);
+                    motors=new LightMotor();
                     motors.setNumbMotors(rand.nextInt(5)+1);
                     break;
                 case 1:
-                    motors=new MediumMotors(skiffHeight);
+                    motors=new MediumMotors();
                     motors.setNumbMotors(rand.nextInt(5)+1);
                     break;
                 case 2:
-                    motors=new PremiumMotor(skiffWidth, skiffHeight);
+                    motors=new PremiumMotor();
                     motors.setNumbMotors(rand.nextInt(5)+1);
                     break;
             }
+            motors.Init(skiffWidth, skiffHeight);
         }
     }
-
+    public void setMotors(ISpeed motors){
+        this.motors=motors;
+        motors.Init(skiffWidth, skiffHeight);
+        Random rand =new Random();
+        if(Motor){
+            motors.setNumbMotors(rand.nextInt(5)+1);
+        }
+        else{
+            motors.setNumbMotors(0);
+        }
+    }
     @Override
     public void DrawTransport(Graphics g)
     {

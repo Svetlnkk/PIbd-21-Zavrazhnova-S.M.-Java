@@ -5,9 +5,6 @@ public class LightMotor implements ISpeed{
     protected static int boatHeight;
     protected static int boatWidth;
 
-    public LightMotor(int boatHeight){
-        this.boatHeight=boatHeight;
-    }
     public void setNumbMotors(int numbMotors){
         this.numbMotors=NumbMotors.values()[numbMotors - (numbMotors-1)/3*3];
     }
@@ -21,5 +18,9 @@ public class LightMotor implements ISpeed{
             g.setColor(Color.black);
             g.drawPolygon(pointMotorfX, pointMotorfY, 4);
         }
+    }
+    public void Init(int boatWidth, int boatHeight){
+        this.boatWidth = boatWidth;
+        this.boatHeight = boatHeight;
     }
 }
