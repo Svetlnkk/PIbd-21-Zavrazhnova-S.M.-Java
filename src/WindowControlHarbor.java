@@ -18,8 +18,7 @@ public class WindowControlHarbor extends JPanel{
     JTextField txtHarborName = new JTextField();
     JButton btnAddHarbor = new JButton("Добавить гавань");
     JButton btnRemoveHarbor = new JButton("Удалить гавань");
-    JButton btnParkingSkiff=new JButton("<html>Припарковать<br>лодку");
-    JButton btnParkingBoat=new JButton("<html>Припарковать<br>катер");
+    JButton btnAddBoat=new JButton("<html>Добавить<br>лодку");
     JButton btnShowBoat=new JButton("Показать");
     JButton btnTake=new JButton("Забрать");
     JLabel labelTake=new JLabel("Забрать водный транспорт");
@@ -27,6 +26,7 @@ public class WindowControlHarbor extends JPanel{
     JFormattedTextField txtIndexPlace;
     private ITransport boat;
     CanvasBoat canvasBoat=new CanvasBoat();
+    WindowBoatConfig windowBoatConfig;
 
     private void Draw(Graphics g){
         if(jListHarbors.getSelectedValue()!=null){
@@ -38,7 +38,18 @@ public class WindowControlHarbor extends JPanel{
         super.paintComponent(g);
         Draw(g);
     }
-
+    protected void configBoat(){
+        windowBoatConfig=new WindowBoatConfig(this);
+        windowBoatConfig.setVisible(true);
+    }
+    public void addBoat(ITransport boat){
+        if((harborCollection.getHarbor(jListHarbors.getSelectedValue()).addSkiff(boat))>-1){
+            repaint();
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Гавань переполнена");
+        }
+    }
     public void addButton(JComponent btn, int btnX, int btnY, int btnWidth, int btnHeigth){
         btn.setBounds(btnX, btnY, btnWidth, btnHeigth);
         add(btn);
@@ -81,8 +92,7 @@ public class WindowControlHarbor extends JPanel{
         addButton(btnRemoveHarbor, 1018, 223, 172, 32);
         addButton(labelTake, 1020, 427, 189, 17);
         addButton(labelPlace, 1030, 457, 57, 18);
-        addButton(btnParkingSkiff, 1021, 272, 149, 62);
-        addButton(btnParkingBoat, 1021, 349, 149, 62);
+        addButton(btnAddBoat, 1021, 272, 149, 62);
         addButton(btnTake, 1050, 507, 95, 31);
         addButton(btnShowBoat, 1050, 560, 95, 31);
         NumberFormat format = NumberFormat.getInstance();
@@ -91,39 +101,10 @@ public class WindowControlHarbor extends JPanel{
         txtIndexPlace = new JFormattedTextField(formatter);
         addButton(txtIndexPlace, 1110, 457, 42, 22);
 
-        btnParkingSkiff.addActionListener(new ActionListener() {
+        btnAddBoat.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Color mainColor = JColorChooser.showDialog( WindowControlHarbor.this, "Выберите цвет лодки", Color.BLUE );
-                if (mainColor != null) {
-                     boat=new Skiff(100, 1000, mainColor);
-                    if (harborCollection.getHarbor(jListHarbors.getSelectedValue()).addSkiff(boat) >-1) {
-                        repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(WindowControlHarbor.this, "Гавань переполнена", "Сообщение", JOptionPane.INFORMATION_MESSAGE );
-                    }
-                }
-            }
-        });
-        btnParkingBoat.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Color mainColor = JColorChooser.showDialog( WindowControlHarbor.this, "Выберите цвет катера", Color.BLUE );
-                if(mainColor!=null){
-                    Color dopColor = JColorChooser.showDialog( WindowControlHarbor.this, "Выберите цвет катера", Color.BLUE );
-                    if(dopColor!=null){
-                        boat = new Boat(100, 1000, mainColor, dopColor,
-                                true, true);
-                        if ((harborCollection.getHarbor(jListHarbors.getSelectedValue()).addSkiff(boat)>-1))
-                        {
-                            repaint();
-                        }
-                        else
-                        {
-                            JOptionPane.showMessageDialog(WindowControlHarbor.this, "Гавань переполнена", "Сообщение", JOptionPane.INFORMATION_MESSAGE );
-                        }
-                    }
-                }
+                configBoat();
             }
         });
         btnTake.addActionListener(new ActionListener() {
