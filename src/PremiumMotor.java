@@ -4,9 +4,11 @@ public class PremiumMotor implements ISpeed{
     protected static int boatWidth;
     private static int boatHeight;
     protected NumbMotors numbMotors;
+    protected static int numb;
 
     public void setNumbMotors(int numbMotors){
         this.numbMotors=NumbMotors.values()[numbMotors - (numbMotors-1)/3*3];
+        numb=numbMotors;
     }
 
     public void drawMotors(Color dopColor, Graphics g, int startX, int startY){
@@ -25,6 +27,12 @@ public class PremiumMotor implements ISpeed{
             g.drawPolygon(pointMotorPX, pointMotorPY, 3);
             g.drawLine(startX+20,startY+i*boatHeight/3, startX+20, startY+i*boatHeight/3+boatHeight/3+1);
         }
+    }
+    public String getName(){
+        return "PremiumMotor";
+    }
+    public int getNumbMotors(){
+        return numb;
     }
     public void Init(int boatWidth, int boatHeight){
         this.boatWidth = boatWidth;

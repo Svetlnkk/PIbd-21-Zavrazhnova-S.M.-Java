@@ -1,10 +1,12 @@
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -24,7 +26,6 @@ public class WindowControlHarbor extends JPanel{
     JLabel labelTake=new JLabel("Забрать водный транспорт");
     JLabel labelPlace=new JLabel("Место: ");
     JFormattedTextField txtIndexPlace;
-    private ITransport boat;
     CanvasBoat canvasBoat=new CanvasBoat();
     WindowBoatConfig windowBoatConfig;
 
@@ -42,7 +43,7 @@ public class WindowControlHarbor extends JPanel{
         windowBoatConfig=new WindowBoatConfig(this);
         windowBoatConfig.setVisible(true);
     }
-    public void addBoat(ITransport boat){
+    public void addBoat(Skiff boat){
         if((harborCollection.getHarbor(jListHarbors.getSelectedValue()).addSkiff(boat))>-1){
             repaint();
         }
@@ -112,7 +113,7 @@ public class WindowControlHarbor extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 if (!Objects.equals(txtIndexPlace.getText(),""))
                 {
-                    boat = harborCollection.getHarbor(jListHarbors.getSelectedValue()).remove(Integer.parseInt(txtIndexPlace.getText()));
+                    var boat = harborCollection.getHarbor(jListHarbors.getSelectedValue()).remove(Integer.parseInt(txtIndexPlace.getText()));
                     if (boat != null)
                     {
                         linkedListHarborRemoveBoat.add(boat);
@@ -155,5 +156,26 @@ public class WindowControlHarbor extends JPanel{
             }
         });
 
+    }
+    public boolean saveHarbors(File saveFile){
+        return harborCollection.SaveData(saveFile);
+    }
+    public boolean loadHarbors(File loadFile){
+        boolean result=harborCollection.LoadData(loadFile);
+        ReloadHarbors();
+        return result;
+    }
+    public boolean saveSeparateHarbor(File saveFile){
+        if(jListHarbors.getSelectedValue()!=null){
+            return harborCollection.SaveSeparateHarbour(saveFile, jListHarbors.getSelectedValue());
+        }
+        else{
+            return false;
+        }
+    }
+    public boolean loadSeparateHarbor(File loadFile){
+        boolean result=harborCollection.LoadSeparateHarbour(loadFile);
+        ReloadHarbors();
+        return result;
     }
 }

@@ -5,14 +5,14 @@ public abstract class Vehicle implements ITransport{
     protected int picWidth;
     protected int picHeight;
     public int MaxSpeed;
-    public float Weight;
+    public int Weight;
     public Color MainColor;
     public void setMaxSpeed(int MaxSpeed){
         this.MaxSpeed=MaxSpeed;
     }
     public int getMaxSpeed(){return MaxSpeed;}
 
-    public void setWeight(float Weight){
+    public void setWeight(int Weight){
         this.Weight=Weight;
     }
     public float getWeight(){return Weight;}
