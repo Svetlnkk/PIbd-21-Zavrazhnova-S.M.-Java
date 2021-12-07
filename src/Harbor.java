@@ -84,5 +84,9 @@ public class Harbor<T extends ITransport, U extends ISpeed> {
                     (PicHeight / placeSizeHeight) * placeSizeHeight);
         }
     }
+    public void clear(){
+        places.clear();
+        places=new ArrayList<T>();
+    }
 }
 

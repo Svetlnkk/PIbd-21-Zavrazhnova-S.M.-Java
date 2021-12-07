@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class WindowBoatConfig extends JFrame{
     JPanel panel=new JPanel();
-    private Vehicle boat;
+    private Skiff boat;
     PanelShowBoat panelShowBoat=new PanelShowBoat();
     JLabel labelCharacteristics = new JLabel("");
     JPanel panelBoatType=new JPanel(new FlowLayout( FlowLayout.CENTER, 10, 10 ));

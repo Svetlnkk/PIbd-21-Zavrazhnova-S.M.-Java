@@ -1,13 +1,14 @@
 import java.awt.*;
+import java.util.Objects;
 import java.util.Random;
 
 public class Boat extends Skiff{
 
     public Color DopColor;
     //палуба катера
-    public Boolean Deck;
+    public boolean Deck;
     //моторы катера
-    public Boolean Motor;
+    public boolean Motor;
 
     private ISpeed motors;
 
@@ -16,20 +17,20 @@ public class Boat extends Skiff{
     }
     public Color getDopColor(){return DopColor;}
 
-    private void setDeck(Boolean Deck){
+    private void setDeck(boolean Deck){
         this.Deck=Deck;
     }
-    public Boolean getDeck(){return Deck;}
+    public boolean getDeck(){return Deck;}
 
-    private void setLightMotor(Boolean Motor){this.Motor=Motor;}
-    public Boolean getLightMotor(){return Motor;}
+    private void setLightMotor(boolean Motor){this.Motor=Motor;}
+    public boolean getLightMotor(){return Motor;}
 
-    public Boat(int maxSpeed, float weight, Color mainColor, Color dopColor,
-                Boolean deck, Boolean Motor)
+    public Boat(int maxSpeed, int weight, Color mainColor, Color DopColor,
+                boolean Deck, boolean Motor)
     {
         super(maxSpeed, weight, mainColor, 165, 78);
-        DopColor = dopColor;
-        Deck = deck;
+        this.DopColor = DopColor;
+        this.Deck = Deck;
         this.Motor=Motor;
         if(Motor){
             Random rand = new Random();
@@ -49,9 +50,42 @@ public class Boat extends Skiff{
             }
             motors.Init(skiffWidth, skiffHeight);
         }
+        else{
+            motors=new LightMotor();
+            motors.setNumbMotors(0);
+        }
     }
-    public void setMotors(ISpeed motors){
-        this.motors=motors;
+    public Boat(String info) {
+        super(info);
+        String[] strs = info.split( String.valueOf( separator ) );
+        if (strs.length == 8) {
+            MaxSpeed = Integer.parseInt( strs[0] );
+            Weight = Integer.parseInt( strs[1] );
+            MainColor = Color.decode( strs[2] );
+            DopColor = Color.decode( strs[3] );
+            Deck=Boolean.parseBoolean(strs[4]);
+            Motor=Boolean.parseBoolean(strs[5]);
+            if(Objects.equals(strs[6], "LightMotor")){
+                motors=new LightMotor();
+            }
+            if(Objects.equals(strs[6], "MediumMotors")){
+                motors=new MediumMotors();
+            }
+            if(Objects.equals(strs[6], "PremiumMotor")){
+                motors=new PremiumMotor();
+            }
+            motors.Init(skiffWidth, skiffHeight);
+            motors.setNumbMotors(Integer.parseInt(strs[7]));
+        }
+    }
+    @Override
+    public String toString() {
+        return String.valueOf(MaxSpeed) + String.valueOf(separator) + String.valueOf(Weight) + String.valueOf(separator) + String.valueOf(MainColor.getRGB())
+                + String.valueOf(separator) + String.valueOf(DopColor.getRGB()) + String.valueOf(separator) +
+                String.valueOf(Deck) + String.valueOf(separator) + String.valueOf(Motor) + String.valueOf(separator) + motors.getName() + String.valueOf(separator) + motors.getNumbMotors();
+    }
+    public void setMotors(ISpeed Motors){
+        motors=Motors;
         motors.Init(skiffWidth, skiffHeight);
         Random rand =new Random();
         if(Motor){
