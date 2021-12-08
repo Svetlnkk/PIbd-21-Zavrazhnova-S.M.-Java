@@ -1,3 +1,7 @@
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -12,6 +16,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 public class WindowControlHarbor extends JPanel{
+    private Logger logger;
     private LinkedList<ITransport> linkedListHarborRemoveBoat=new LinkedList<ITransport>();
     private HarborCollection harborCollection;
     private DefaultListModel<String> defListModelHarbors = new DefaultListModel<String>();
@@ -44,11 +49,19 @@ public class WindowControlHarbor extends JPanel{
         windowBoatConfig.setVisible(true);
     }
     public void addBoat(Skiff boat){
-        if((harborCollection.getHarbor(jListHarbors.getSelectedValue()).addSkiff(boat))>-1){
-            repaint();
+        try {
+            if ((harborCollection.getHarbor(jListHarbors.getSelectedValue()).addSkiff(boat)) > -1) {
+                repaint();
+                logger.info("Добавлена лодка " + boat);
+            }
         }
-        else{
+        catch(HarborOverflowException ex){
             JOptionPane.showMessageDialog(null, "Гавань переполнена");
+            logger.warn(ex.getMessage());
+        }
+        catch(Exception ex){
+            logger.fatal(ex.toString());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }
     public void addButton(JComponent btn, int btnX, int btnY, int btnWidth, int btnHeigth){
@@ -78,6 +91,8 @@ public class WindowControlHarbor extends JPanel{
     }
 
     public WindowControlHarbor(){
+        logger = LogManager.getLogger( WindowControlHarbor.class );
+        PropertyConfigurator.configure("D:\\Course 2\\ProgTech\\JavaHard\\JavaGit\\src\\log4j.properties");
         harborCollection=new HarborCollection(1100, 664);
         canvasBoat.setModal(true);
         setBackground(Color.white);
@@ -113,13 +128,22 @@ public class WindowControlHarbor extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 if (!Objects.equals(txtIndexPlace.getText(),""))
                 {
-                    var boat = harborCollection.getHarbor(jListHarbors.getSelectedValue()).remove(Integer.parseInt(txtIndexPlace.getText()));
-                    if (boat != null)
-                    {
-                        linkedListHarborRemoveBoat.add(boat);
-
+                    try {
+                        var boat = harborCollection.getHarbor(jListHarbors.getSelectedValue()).remove(Integer.parseInt(txtIndexPlace.getText()));
+                        if (boat != null) {
+                            linkedListHarborRemoveBoat.add(boat);
+                        }
+                        repaint();
+                        logger.info("Забрали лодку " + boat + " с места " + jListHarbors.getSelectedValue());
                     }
-                    repaint();
+                    catch(HarborNotFoundException ex){
+                        JOptionPane.showMessageDialog(null, "Нет лодки", "Сообщение", JOptionPane.INFORMATION_MESSAGE );
+                        logger.warn( ex.getMessage() );
+                    }
+                    catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE );
+                        logger.fatal( ex.getMessage() );
+                    }
                 }
             }
         });
@@ -139,6 +163,7 @@ public class WindowControlHarbor extends JPanel{
                     JOptionPane.showMessageDialog(null, "Введите название гавани", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
                 else{
+                    logger.info( "Добавили гавань " + txtHarborName.getText() );
                     harborCollection.AddHarbor(txtHarborName.getText());
                     ReloadHarbors();
                 }
@@ -150,6 +175,7 @@ public class WindowControlHarbor extends JPanel{
                 if(jListHarbors.getSelectedValue()!=null){
                     if(JOptionPane.showConfirmDialog(null, "Удалить гавань " + jListHarbors.getSelectedValue() + "?") == 0){
                         harborCollection.DelHarbor(jListHarbors.getSelectedValue());
+                        logger.info("Удалили гавань " + jListHarbors.getSelectedValue());
                         ReloadHarbors();
                     }
                 }
@@ -157,25 +183,68 @@ public class WindowControlHarbor extends JPanel{
         });
 
     }
-    public boolean saveHarbors(File saveFile){
-        return harborCollection.SaveData(saveFile);
-    }
-    public boolean loadHarbors(File loadFile){
-        boolean result=harborCollection.LoadData(loadFile);
-        ReloadHarbors();
-        return result;
-    }
-    public boolean saveSeparateHarbor(File saveFile){
-        if(jListHarbors.getSelectedValue()!=null){
-            return harborCollection.SaveSeparateHarbour(saveFile, jListHarbors.getSelectedValue());
+    public void saveHarbors(File saveFile){
+        try {
+            harborCollection.SaveData(saveFile);
         }
-        else{
-            return false;
+        catch(Exception ex){
+            logger.fatal(ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Неизвестная ошибка при сохранении", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public boolean loadSeparateHarbor(File loadFile){
-        boolean result=harborCollection.LoadSeparateHarbour(loadFile);
-        ReloadHarbors();
-        return result;
+    public void loadHarbors(File loadFile){
+        try {
+            harborCollection.LoadData(loadFile);
+        }
+        catch(HarborOverflowException ex){
+            logger.warn( ex.getMessage() );
+            JOptionPane.showMessageDialog( null, "Не удалось загрузить файл", "Результат",JOptionPane.ERROR_MESSAGE );
+        }
+        catch (StackOverflowError ex) {
+            logger.error(ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Переполнение при загрузке", JOptionPane.ERROR_MESSAGE);
+        }
+        catch(Exception ex) {
+            logger.fatal( ex.getMessage() );
+            JOptionPane.showMessageDialog( null,ex.getMessage() , "Неизвестная ошибка",JOptionPane.ERROR_MESSAGE );
+        }
+        finally {
+            ReloadHarbors();
+            repaint();
+        }
+    }
+    public void saveSeparateHarbor(File saveFile){
+        try {
+            if (jListHarbors.getSelectedValue() != null) {
+                logger.info( "Гавань " + jListHarbors.getSelectedValue() + " сохранена в файл " + saveFile);
+                harborCollection.SaveSeparateHarbour(saveFile, jListHarbors.getSelectedValue());
+            }
+        }
+        catch(Exception ex){
+            logger.fatal( ex.getMessage());
+            JOptionPane.showMessageDialog( null, ex.getMessage(),"Не удалось сохранить выбранную гавань",JOptionPane.ERROR_MESSAGE );
+        }
+    }
+    public void loadSeparateHarbor(File loadFile){
+        try {
+            harborCollection.LoadSeparateHarbour(loadFile);
+        }
+        catch(HarborOverflowException ex){
+            logger.warn( ex.getMessage() );
+            JOptionPane.showMessageDialog( null, "Не удалось загрузить файл", "Результат",JOptionPane.ERROR_MESSAGE );
+        }
+        catch (StackOverflowError ex) {
+            logger.error(ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Переполнение при загрузке", JOptionPane.ERROR_MESSAGE);
+        }
+        catch(Exception ex){
+            logger.fatal( ex.getMessage() );
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Неизвестная ошибка",JOptionPane.ERROR_MESSAGE  );
+        }
+        finally {
+            ReloadHarbors();
+            repaint();
+        }
+
     }
 }

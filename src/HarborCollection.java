@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class HarborCollection {
     public Map<String, Harbor<Vehicle, LightMotor>> harborStages=new HashMap<String, Harbor<Vehicle, LightMotor>>();
@@ -45,7 +47,7 @@ public class HarborCollection {
         }
         return null;
     }
-    public boolean SaveData(File fileName){
+    public boolean SaveData(File fileName) throws Exception{
         if (fileName.exists()){
             fileName.delete();
         }
@@ -73,13 +75,10 @@ public class HarborCollection {
             }
             return true;
         }
-        catch(IOException ex){
-            return false;
-        }
     }
-    public boolean LoadData(File fileName){
+    public boolean LoadData(File fileName) throws Exception{
         if(!fileName.exists()){
-            return false;
+            throw new FileNotFoundException();
         }
         try(BufferedReader reader = new BufferedReader(new FileReader( fileName ))){
             String line = reader.readLine();
@@ -87,7 +86,7 @@ public class HarborCollection {
                 harborStages.clear();
             }
             else {
-                return false;
+                throw new Exception("Неверный формат файла");
             }
             Vehicle skiff = null;
             String key = "";
@@ -111,20 +110,17 @@ public class HarborCollection {
                 }
                 var result=harborStages.get(key).addSkiff(skiff);
                 if(result==-1){
-                    return false;
+                    throw new HarborOverflowException();
                 }
             }
             return true;
 
         }
-        catch(IOException ex){
-            return false;
-        }
     }
 
-    public boolean SaveSeparateHarbour(File fileName, String key){
+    public boolean SaveSeparateHarbour(File fileName, String key) throws Exception{
         if(!harborStages.containsKey(key)){
-            return false;
+            throw new Exception("Такой гавани нет");
         }
         if(fileName.exists()){
             fileName.delete();
@@ -146,19 +142,16 @@ public class HarborCollection {
             }
             return true;
         }
-        catch(IOException ex) {
-            return false;
-        }
     }
 
-    public boolean LoadSeparateHarbour(File fileName){
+    public boolean LoadSeparateHarbour(File fileName) throws Exception{
         if(!fileName.exists()){
-            return false;
+            throw new FileNotFoundException();
         }
         try(BufferedReader reader = new BufferedReader( new FileReader( fileName ) )) {
             String line = reader.readLine();
             if(!line.contains("Harbor" + String.valueOf(separator))){
-                return false;
+                throw new Exception("Неверный формат файла");
             }
             else{
                 String key=line.split(String.valueOf(separator))[1];
@@ -178,14 +171,11 @@ public class HarborCollection {
                     }
                     var result = harborStages.get(key).addSkiff(skiff);
                     if (result == -1) {
-                        return false;
+                        throw new StackOverflowError("Не получилось загрузить лодку");
                     }
                 }
             }
             return true;
-        }
-        catch(IOException ex) {
-            return false;
         }
     }
 }

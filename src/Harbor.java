@@ -20,30 +20,30 @@ public class Harbor<T extends ITransport, U extends ISpeed> {
         PicWidth = picWidth;
         PicHeight = picHeight;
     }
-    public T getBoat(int index){
+    public T getBoat(int index)throws HarborNotFoundException{
         if(index>-1 && index<places.size()){
             return places.get(index);
         }
         return null;
     }
 
-    public int addSkiff(T skiff){
+    public int addSkiff(T skiff)throws HarborOverflowException{
         if(places.size()<maxCount){
             places.add(skiff);
             return places.size()-1;
         }
         else {
-            return -1;
+            throw new HarborOverflowException();
         }
     }
 
-    public T remove(int index){
+    public T remove(int index)throws HarborNotFoundException{
         if(index>-1 && index<places.size()){
             T removeSkiff=places.get(index);
             places.remove(index);
             return removeSkiff;
         }
-        else { return null; }
+        else { throw new HarborNotFoundException( index ); }
     }
 
     public boolean equal(int numBoat) { // ==
