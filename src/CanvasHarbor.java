@@ -2,9 +2,13 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 public class CanvasHarbor extends JFrame{
     WindowControlHarbor windowControlHarbor=new WindowControlHarbor();
+    private Logger logger;
     JFileChooser fileChooser = new JFileChooser();
     JMenuBar menuBar=new JMenuBar();
     JMenuItem openFile=new JMenuItem("Открыть");
@@ -14,6 +18,8 @@ public class CanvasHarbor extends JFrame{
     JMenu file=new JMenu("Файл");
 
     public CanvasHarbor(){
+        logger= LogManager.getLogger(CanvasHarbor.class);
+        PropertyConfigurator.configure("D:\\Course 2\\ProgTech\\JavaHard\\JavaGit\\src\\log4j.properties");
         setTitle("Гавань");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1220, 700);
@@ -31,12 +37,13 @@ public class CanvasHarbor extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (fileChooser.showDialog( null, "Сохранить гавани" )== JFileChooser.APPROVE_OPTION) {
-                    if(windowControlHarbor.saveHarbors(fileChooser.getSelectedFile())) {
-                        JOptionPane.showMessageDialog(null, "Сохранили", "Результат", JOptionPane.WARNING_MESSAGE);
-                    }
-                    else {
-                        JOptionPane.showMessageDialog( null, "Не удалось сохранить файл", "Результат", JOptionPane.ERROR_MESSAGE );
-                    }
+                    windowControlHarbor.saveHarbors(fileChooser.getSelectedFile());
+                    JOptionPane.showMessageDialog(null, "Сохранили", "Результат", JOptionPane.WARNING_MESSAGE);
+                    logger.info( "Сохранено в файл " + fileChooser.getSelectedFile());
+                }
+                else {
+                    logger.warn( "Не удалось сохранить файл" );
+                    JOptionPane.showMessageDialog(null, "Не удалось сохранить файл", "Результат", JOptionPane.ERROR_MESSAGE  );
                 }
             }
         });
@@ -45,12 +52,13 @@ public class CanvasHarbor extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (fileChooser.showDialog( null, "Загрузить из файла") == JFileChooser.APPROVE_OPTION) {
-                    if(windowControlHarbor.loadHarbors(fileChooser.getSelectedFile())) {
-                        JOptionPane.showMessageDialog(null, "Загрузили", "Результат", JOptionPane.WARNING_MESSAGE);
-                    }
-                    else {
-                        JOptionPane.showMessageDialog( null, "Не удалось загрузить файл", "Результат",JOptionPane.ERROR_MESSAGE );
-                    }
+                    windowControlHarbor.loadHarbors(fileChooser.getSelectedFile());
+                    JOptionPane.showMessageDialog(null, "Загрузили", "Результат", JOptionPane.WARNING_MESSAGE);
+                    logger.info( "Загружено из файла " + fileChooser.getSelectedFile());
+                }
+                else{
+                    logger.warn( "Не удалось загрузить файл c гаванями" );
+                    JOptionPane.showMessageDialog( null, "Не удалось загрузить файл", "Результат",JOptionPane.ERROR_MESSAGE );
                 }
             }
         });
@@ -59,12 +67,12 @@ public class CanvasHarbor extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (fileChooser.showDialog( null, "Сохраннить гавань" )== JFileChooser.APPROVE_OPTION) {
-                    if(windowControlHarbor.saveSeparateHarbor(fileChooser.getSelectedFile())) {
+                        windowControlHarbor.saveSeparateHarbor(fileChooser.getSelectedFile());
                         JOptionPane.showMessageDialog(null, "Сохранили гавань " , "Результат", JOptionPane.WARNING_MESSAGE);
-                    }
-                    else{
-                        JOptionPane.showMessageDialog( null, "Не удалось сохранить выбранную гавань","Результат",JOptionPane.ERROR_MESSAGE );
-                    }
+                }
+                else{
+                    logger.warn( "Не удалось сохранить файл" );
+                    JOptionPane.showMessageDialog(null, "Не удалось сохранить файл", "Результат",JOptionPane.ERROR_MESSAGE );
                 }
             }
         });
@@ -73,10 +81,12 @@ public class CanvasHarbor extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (fileChooser.showDialog(null, "Загрузить из файла") == JFileChooser.APPROVE_OPTION) {
-                   if(windowControlHarbor.loadSeparateHarbor(fileChooser.getSelectedFile()))
-                    JOptionPane.showMessageDialog( null, "Загрузили гавань", "Результат",JOptionPane.WARNING_MESSAGE );
+                    windowControlHarbor.loadSeparateHarbor(fileChooser.getSelectedFile());
+                    JOptionPane.showMessageDialog(null, "Загрузили гавань", "Результат", JOptionPane.WARNING_MESSAGE);
+                    logger.info( "Гавань загружена из файла " + fileChooser.getSelectedFile());
                 }
                 else {
+                    logger.warn( "Загрузка невозможна" );
                     JOptionPane.showMessageDialog( null, "Не удалось загрузить файл","Результат",JOptionPane.ERROR_MESSAGE );
                 }
             }
