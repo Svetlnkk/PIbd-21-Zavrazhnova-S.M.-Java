@@ -57,8 +57,7 @@ public class HarborCollection {
                 Harbor<Vehicle, LightMotor> harbor=harborStages.get(keys().get(i));
                 //Начинаем парковку
                 fs.write("Harbor" + separator + keys().get(i) + System.lineSeparator());
-                ITransport skiff = null;
-                for (int j = 0; (skiff = harbor.getBoat(j)) != null; j++) {
+                for(Vehicle skiff:harbor){
                     if (skiff != null) {
                         //если место не пустое
                         //Записываем тип лодки
@@ -128,8 +127,7 @@ public class HarborCollection {
         try(FileWriter fw = new FileWriter( fileName )){
             Harbor<Vehicle, LightMotor> level = harborStages.get(key);
             fw.write( "Harbor" + separator + key + System.lineSeparator() );
-            ITransport skiff = null;
-            for (int i = 0; (skiff = level.getBoat( i )) != null; i++) {
+            for(Vehicle skiff:level){
                 if(skiff!=null) {
                     if (skiff.getClass().getSimpleName().equals("Skiff")) {
                         fw.write("Skiff" + separator);

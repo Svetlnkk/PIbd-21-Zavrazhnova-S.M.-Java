@@ -30,6 +30,7 @@ public class WindowControlHarbor extends JPanel{
     JButton btnTake=new JButton("Забрать");
     JLabel labelTake=new JLabel("Забрать водный транспорт");
     JLabel labelPlace=new JLabel("Место: ");
+    JButton btnSort = new JButton("Сортировать");
     JFormattedTextField txtIndexPlace;
     CanvasBoat canvasBoat=new CanvasBoat();
     WindowBoatConfig windowBoatConfig;
@@ -58,6 +59,10 @@ public class WindowControlHarbor extends JPanel{
         catch(HarborOverflowException ex){
             JOptionPane.showMessageDialog(null, "Гавань переполнена");
             logger.warn(ex.getMessage());
+        }
+        catch (HarborAlreadyHaveException ex){
+            logger.warn(ex.getMessage());
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Дублирование", JOptionPane.ERROR_MESSAGE);
         }
         catch(Exception ex){
             logger.fatal(ex.toString());
@@ -111,6 +116,7 @@ public class WindowControlHarbor extends JPanel{
         addButton(btnAddBoat, 1021, 272, 149, 62);
         addButton(btnTake, 1050, 507, 95, 31);
         addButton(btnShowBoat, 1050, 560, 95, 31);
+        addButton(btnSort, 1021, 343, 159, 55);
         NumberFormat format = NumberFormat.getInstance();
         NumberFormatter formatter = new NumberFormatter(format);
         formatter.setAllowsInvalid(false);
@@ -178,6 +184,16 @@ public class WindowControlHarbor extends JPanel{
                         logger.info("Удалили гавань " + jListHarbors.getSelectedValue());
                         ReloadHarbors();
                     }
+                }
+            }
+        });
+        btnSort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(jListHarbors.getSelectedValue()!=null){
+                    harborCollection.getHarbor(jListHarbors.getSelectedValue()).sort();
+                    logger.info("Сортировка уровней");
+                    repaint();
                 }
             }
         });
