@@ -1,7 +1,9 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
 
-public class Harbor<T extends ITransport, U extends ISpeed> {
+public class Harbor<T extends ITransport, U extends ISpeed> implements Iterable<Vehicle>, Iterator<Vehicle> {
     private ArrayList<T> places;
     private int maxCount;
     private int PicWidth;
@@ -27,14 +29,15 @@ public class Harbor<T extends ITransport, U extends ISpeed> {
         return null;
     }
 
-    public int addSkiff(T skiff)throws HarborOverflowException{
-        if(places.size()<maxCount){
-            places.add(skiff);
-            return places.size()-1;
-        }
-        else {
+    public int addSkiff(T skiff)throws HarborOverflowException, HarborAlreadyHaveException{
+        if(places.size()>=maxCount){
             throw new HarborOverflowException();
         }
+        if(places.contains(skiff)){
+            throw new HarborAlreadyHaveException();
+        }
+        places.add(skiff);
+        return places.size()-1;
     }
 
     public T remove(int index)throws HarborNotFoundException{
@@ -83,6 +86,27 @@ public class Harbor<T extends ITransport, U extends ISpeed> {
             g.drawLine( i * placeSizeWidth+3, 0, i * placeSizeWidth+3,
                     (PicHeight / placeSizeHeight) * placeSizeHeight);
         }
+    }
+    public void sort(){
+        places.sort((Comparator<T>) new HarborComparer());
+    }
+    private int count=0;
+    public boolean hasNext(){
+        if(count<places.size()){
+            return true;
+        }
+        return false;
+    }
+    public Vehicle next(){
+        count+=1;
+        return (Vehicle)getBoat(count-1);
+    }
+    public void remove(){
+        throw new UnsupportedOperationException();
+    }
+    public Iterator<Vehicle> iterator(){
+        count=0;
+        return this;
     }
     public void clear(){
         places.clear();

@@ -1,8 +1,10 @@
 import java.awt.*;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Random;
 
-public class Boat extends Skiff{
+public class Boat extends Skiff implements Comparable<Object>, Iterable<Object>, Iterator<Object> {
 
     public Color DopColor;
     //палуба катера
@@ -24,7 +26,7 @@ public class Boat extends Skiff{
 
     private void setLightMotor(boolean Motor){this.Motor=Motor;}
     public boolean getLightMotor(){return Motor;}
-
+    protected LinkedList<Object> listBoatProperties = new LinkedList<>();
     public Boat(int maxSpeed, int weight, Color mainColor, Color DopColor,
                 boolean Deck, boolean Motor)
     {
@@ -54,6 +56,12 @@ public class Boat extends Skiff{
             motors=new LightMotor();
             motors.setNumbMotors(0);
         }
+        listBoatProperties.add(MaxSpeed);
+        listBoatProperties.add(Weight);
+        listBoatProperties.add(MainColor);
+        listBoatProperties.add(DopColor);
+        listBoatProperties.add(Motor);
+        listBoatProperties.add(motors);
     }
     public Boat(String info) {
         super(info);
@@ -77,12 +85,107 @@ public class Boat extends Skiff{
             motors.Init(skiffWidth, skiffHeight);
             motors.setNumbMotors(Integer.parseInt(strs[7]));
         }
+        listBoatProperties.add(MaxSpeed);
+        listBoatProperties.add(Weight);
+        listBoatProperties.add(MainColor);
+        listBoatProperties.add(DopColor);
+        listBoatProperties.add(Motor);
+        listBoatProperties.add(motors);
     }
     @Override
     public String toString() {
         return String.valueOf(MaxSpeed) + String.valueOf(separator) + String.valueOf(Weight) + String.valueOf(separator) + String.valueOf(MainColor.getRGB())
                 + String.valueOf(separator) + String.valueOf(DopColor.getRGB()) + String.valueOf(separator) +
                 String.valueOf(Deck) + String.valueOf(separator) + String.valueOf(Motor) + String.valueOf(separator) + motors.getName() + String.valueOf(separator) + motors.getNumbMotors();
+    }
+    public boolean equals(Boat other) {
+        if (other == null) {
+            return false;
+        }
+        if (other.getClass() != Boat.class) {
+            return false;
+        }
+        if (MaxSpeed != other.MaxSpeed) {
+            return false;
+        }
+        if (Weight != other.Weight) {
+            return false;
+        }
+        if (MainColor != other.MainColor) {
+            return false;
+        }
+        if (DopColor != other.DopColor) {
+            return false;
+        }
+        if (Deck != other.Deck) {
+            return false;
+        }
+        if (Motor != other.Motor) {
+            return false;
+        }
+        if (motors.getClass() != other.motors.getClass()){
+            return false;
+        }
+        if(motors.getNumbMotors()!=other.motors.getNumbMotors()){
+            return false;
+        }
+        return true;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != Boat.class){
+            return false;
+        }
+        else {
+            return equals((Boat)obj);
+        }
+    }
+    @Override
+    public int compareTo(Object obj) {
+        if (obj == null) {
+            return -1;
+        }
+        if (obj.getClass() != Skiff.class) {
+            return -1;
+        }
+        Boat other = (Boat) obj;
+        if (MaxSpeed != other.MaxSpeed) {
+            return Integer.compare(MaxSpeed, other.MaxSpeed);
+        }
+        if (Weight != other.Weight) {
+            return Integer.compare(Weight, other.Weight);
+        }
+        if (MainColor != other.MainColor) {
+            return Integer.compare(MainColor.getRGB(), other.MainColor.getRGB());
+        }if (DopColor != other.DopColor) {
+            return Integer.compare(DopColor.getRGB(), other.DopColor.getRGB());
+        }
+        if (Deck != other.Deck) {
+            return Boolean.compare(Deck, other.Deck);
+        }
+        if (Motor != other.Motor) {
+            return Boolean.compare(Motor, other.Motor);
+        }
+        return 0;
+    }
+    private int count = 0;
+    public boolean hasNext(){
+        if (count < listBoatProperties.size()){
+            return true;
+        }
+        return false;
+    }
+    public Object next(){
+        count += 1;
+        return listBoatProperties.get(count);
+    }
+    public void remove(){}
+    public Iterator<Object> iterator(){
+        count = 0;
+        return listBoatProperties.iterator();
     }
     public void setMotors(ISpeed Motors){
         motors=Motors;
@@ -114,4 +217,5 @@ public class Boat extends Skiff{
             motors.drawMotors(DopColor, g, startX, startY);
         }
     }
+
 }
